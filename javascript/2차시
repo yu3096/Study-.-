@@ -1,0 +1,120 @@
+# Study-Javascript
+    최종 수정일 : 2020.05.06
+    
+## 목차
+[1.1. 객체](#11-객체)   
+[1.2. 사용자 정의 생성자 함수](#12-사용자-정의-생성자-함수)   
+[1.3. 객체 리터럴](#13-객체-리터럴)   
+[1.4. 템플릿 리터럴](#14-템플릿-리터럴)   
+[1.5. 함수](#15-함수)   
+[1.6. 함수 생성](#16-함수-생성)   
+[1.7. 함수의 범위 및 호이스팅](#17-함수의-범위-및-호이스팅)   
+[1.8. 클로저](#18-클로저)   
+[1.9. 즉시 실행 함수](#19-즉시-실행-함수)
+[1.10. 화살표 함수]
+[1.11. 클래스]
+
+### 1.1 객체
+    관련 된 여러가지 데이터와 함수들의 집합
+    Property : 객체 안의 데이터
+    Method : 객체 안의 함수
+```javascript
+  var obj = new Object();
+  obj.memberProperty = "27"; // Property
+  obj.memberMethod = function(){ // Method
+    console.log(this.memberProperty);
+  };
+```
+** Object의 Property와 Method는 프로그램의 Life Cycle중 어느 때라도 추가 / 변경이 가능하다.
+
+### 1.2. 사용자 정의 생성자 함수
+```javascript
+  var Person = function(name){
+    this.name = name;
+    this.say = function(){
+      console.log("I am " + this.name);
+    }
+  };
+  var Yu = new Person("Yu");
+```
+객체 리터럴이나 내장 객체의 생성자 함수를 사용하지 않고, 직접 생성자 함수를 정의하여 객체를 생성할 수 있음.
+
+생성자 함수는 Class를 이용한 방식과 흡사, new 키워드 없이 사용한 경우의 Person은 단순 함수.
+new와 생성자 함수를 이용하여 호출하면 this라는 내부의 객체가 생성, this는 변수로 써 참조할 수 있으며 해당 함수의 prototype을 상속받음
+마지막으로 생성자 함수에 별도 반환값을 지정하지 않을 경우 this가 참조된 객체가 반환된다.
+
+#### 사용자 정의 생성자 함수의 문제점
+javascript에서 생성자 함수의 경우, 일반 함수로도 사용이 될 수 있으므로 예기치 못한 오류가 발생할 수 있음.
+때문에 ECMA5에서는 strict 모드에서 this가 전역 객체를 가리키지 않도록 함.
+
+```javascript
+  function Waffle(){
+    this.tastes = "good";
+  }
+  
+  var a = new Waffle();
+  console.log(typeof a); // object
+  console.log(a.tastes); // good
+  
+  var b = Waffle();
+  console.log(typeof b); // undefined
+  console.log(b.tastes); // Cannot read property 'tastes' of undefined
+  console.log(window.tastes); // good
+```
+
+해결방법 1. 함수 내부에 사용 된 this를 that으로 변경하여 사용( that 대신 객체 리터럴을 반환시킬 수 있다. )
+  ```javascript
+    // this -> that
+    function Waffle(){
+      var that = {};
+      that.tastes = "good";
+      return that;
+    }
+    
+    // that -> 객체 리터럴
+    function Waffle(){
+      return {
+        tastes : "good"
+      };
+    }
+  ```
+  
+해결방법 2. 생성자 내부에서 this가 해당 생성자의 인스턴스인지 확인 후, 아닐 경우 new와 함께 스스로의 생성자 함수 재 호출 ( Java의 싱글톤 방식과 흡사 )
+           this는 생성자 함수로 호출 되면 함수의 프로토타입을 상속받기 때문에 생성자로 호출 되었는지 함수로 호출 되었는지 구분이 가능
+```javascript
+  function Waffle(){
+    if( !(this.instanceof Waffle) ){
+      return new Waffle();
+    }
+    
+    this.tastes = "good";
+  }
+```
+
+### 1.3. 객체 리터럴
+
+생성자 함수를 사용하지 않은 약식의 객체 Initializer
+흔히 아는 JSON 객체의 형태
+ > 중괄호({})로 감싼다.
+ > 프로퍼티와 메소드를 쉼표(,)로 분리
+ > 프로퍼티명과 값은 콜론(:)으로 분리
+ > 닫는 중괄호 뒤에는 세미콜론(;)으로 마무리
+ 
+ ```javascript
+  var person = {
+                 name: ['Bob', 'Smith'],
+                 age: 32,
+                 gender: 'male',
+                 interests: ['music', 'skiing'],
+                 bio: function() {
+                   console.log(this.name[0] + ' ' + this.name[1] + ' is ' + this.age + 
+                               ' years old. He likes ' + this.interests[0] + ' and ' + this.interests[1] + '.');
+                 },
+                 greeting: function() {
+                     console.log('Hi! I\'m ' + this.name[0] + '.');
+                 }
+               };
+  person.name;
+  person["gender"];
+  person.bio();
+ ```
