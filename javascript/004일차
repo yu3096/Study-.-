@@ -1,0 +1,40 @@
+# Study-Javascript
+    최종 수정일 : 2020.05.11
+
+## 목차
+[4.1. for](#41-for)  
+[4.2. while](#42-while)  
+[4.3. do ~ while](#43-do-~-while)  
+[4.4. label]
+[4.5. break / continue]
+[4.6. for ~ in / for ~ of]
+
+### 4.1. for
+그냥, 흔히 알고 있는 for문
+```javascript
+  for( var vFor = 0; vFor < vFor++ ){
+    console.log(vFor);
+  }
+```
+
+### 4.2. while
+그냥, 흔히 알고 있는 while문과 동일
+```javascript
+  while( var vWhile = 0; vWhile < 10 ){ // js if처럼 이런거 안됨.
+    console.log(vWhile);
+    vWhile++;
+  }
+  
+  var vWhile = 0;
+  while( vWhile < 10 ){
+    console.log(vWhile);
+    vWhile++;
+  }
+```
+
+### 4.3. do ~ while
+그냥, 알고 있는 do ~ while문과 동일
+
+#### for / while / do ~ while 주 용도
+|for                 |while|do ~ while|
+|반복 횟수가 명확할 때|반복 횟수가 불명확할 때|반복 횟수가 불명확하나 1회는 무조건 실행되야할 때|
