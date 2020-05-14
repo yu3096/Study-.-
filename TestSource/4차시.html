@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DOM Access Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+    <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+        body{
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        #domList>li{
+            display: inline-block;
+        }
+    </style>
+    <script>
+        // 성능 체크를 위한 공통 함수
+        const _TEST_COUNT = 10;
+
+        Array.prototype.sum = function() {
+            return this.reduce((s, e) => s + e, 0);
+        };
+        Array.prototype.avg = function(){
+            return this.sum() / this.length;
+        }
+
+        let setTimer = label => {
+            let _data = {
+                 start : undefined
+                ,end   : undefined
+            };
+
+            let start = () => {
+                //console.time(label);
+                _data.start = performance.now();
+            };
+            let end   = () => {
+                //console.timeEnd(label);
+                _data.end = performance.now();
+            };
+            let calc  = () => {
+                return _data.end - _data.start;
+            };
+
+            return {
+                 start: start
+                ,end: end
+                ,calc: calc
+            };
+        };
+
+        window.onload = () => {
+            // 버튼 별 데이터 세팅
+            let buttons = document.getElementsByTagName("button");
+
+            for( let i=0; i<buttons.length; i++ ){
+                buttons.item(i).addEventListener("click", function() {
+                    let param = this.dataset.param;
+
+                    // _TEST_COUNT 만큼 promise 생성
+                    let promiseArr = [];
+                    for (let j = 0; j < _TEST_COUNT; j++) {
+                        let timer = setTimer(this.name + "-" + j);
+
+                        promiseArr.push(
+                            new Promise((resolve, reject) => {
+                                timer.start();
+                                resolve();
+                            })
+                            .then(() => {
+                                if (!param) {
+                                    eval(this.name + "()");
+                                } else {
+                                    eval(this.name + "(" + document.getElementsByName(param)[0].value + ")");
+                                }
+                            })
+                            .then(() => {
+                                timer.end();
+                            })
+                            .then(() => {
+                                return timer.calc();
+                            })
+                        )
+                    }
+
+                    Promise.all(promiseArr).then(values => {
+                        //console.log(values);
+                        console.log("평균 : " + values.avg());
+                    });
+                });
+            }
+        }
+
+        // 반복문 성능 비교
+        function check_for(count){
+            for( let i=count; i>0; i-- ){
+            }
+        }
+        function check_while(count){
+            while( count-- > 0 ){
+            }
+        }
+        function check_do_while(count){
+            do{
+                count--;
+            }while( count > 0 )
+        }
+
+        // Dom 컨트롤 성능 비교
+        function check_dom1(){
+            for( let i=0; i<document.querySelectorAll("#domList>li").length; i++ ){
+                document.querySelectorAll("#domList>li")[i].innerText = "변경";
+            }
+        }
+        function check_dom2(){
+            let li = document.querySelectorAll("#domList>li");
+            for( let i=0; i<document.querySelectorAll("#domList>li").length; i++ ){
+                li[i].innerText = "변경";
+            }
+        }
+        function check_dom3(){
+            let li = document.querySelectorAll("#domList>li");
+            let cnt = li.length;
+            for( let i=0; i<cnt; i++ ){
+                li[i].innerText = "변경";
+            }
+        }
+    </script>
+</head>
+<body>
+  <h2>반복문 성능 비교</h2>
+  <table class="u-full-width">
+      <tbody>
+        <tr>
+            <td colspan="3">
+                <input type="number" name="repeatCnt" placeholder="반복 횟수" class="u-full-width">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button name="check_for"      data-param="repeatCnt">for check</button>
+            </td>
+            <td>
+                <button name="check_while"    data-param="repeatCnt">check_while</button>
+            </td>
+            <td>
+                <button name="check_do_while" data-param="repeatCnt">check_do_while</button>
+            </td>
+        </tr>
+      </tbody>
+  </table>
+
+  <h2>DOM객체 컨트롤 방식에 따른 시간 차이</h2>
+  <table class="u-full-width">
+      <thead>
+        <tr>
+            <td colspan="3">
+                <ul id="domList">
+                    <li>001</li>
+                    <li>002</li>
+                    <li>003</li>
+                    <li>004</li>
+                    <li>005</li>
+                    <li>006</li>
+                    <li>007</li>
+                    <li>008</li>
+                    <li>009</li>
+                    <li>010</li>
+                    <li>011</li>
+                    <li>012</li>
+                    <li>013</li>
+                    <li>014</li>
+                    <li>015</li>
+                    <li>016</li>
+                    <li>017</li>
+                    <li>018</li>
+                    <li>019</li>
+                    <li>020</li>
+                    <li>021</li>
+                    <li>022</li>
+                    <li>023</li>
+                    <li>024</li>
+                    <li>025</li>
+                    <li>026</li>
+                    <li>027</li>
+                    <li>028</li>
+                    <li>029</li>
+                    <li>030</li>
+                    <li>031</li>
+                    <li>032</li>
+                    <li>033</li>
+                    <li>034</li>
+                    <li>035</li>
+                    <li>036</li>
+                    <li>037</li>
+                    <li>038</li>
+                    <li>039</li>
+                    <li>040</li>
+                    <li>041</li>
+                    <li>042</li>
+                    <li>043</li>
+                    <li>044</li>
+                    <li>045</li>
+                    <li>046</li>
+                    <li>047</li>
+                    <li>048</li>
+                    <li>049</li>
+                    <li>050</li>
+                    <li>051</li>
+                    <li>052</li>
+                    <li>053</li>
+                    <li>054</li>
+                    <li>055</li>
+                    <li>056</li>
+                    <li>057</li>
+                    <li>058</li>
+                    <li>059</li>
+                    <li>060</li>
+                    <li>061</li>
+                    <li>062</li>
+                    <li>063</li>
+                    <li>064</li>
+                    <li>065</li>
+                    <li>066</li>
+                    <li>067</li>
+                    <li>068</li>
+                    <li>069</li>
+                    <li>070</li>
+                    <li>071</li>
+                    <li>072</li>
+                    <li>073</li>
+                    <li>074</li>
+                    <li>075</li>
+                    <li>076</li>
+                    <li>077</li>
+                    <li>078</li>
+                    <li>079</li>
+                    <li>080</li>
+                    <li>081</li>
+                    <li>082</li>
+                    <li>083</li>
+                    <li>084</li>
+                    <li>085</li>
+                    <li>086</li>
+                    <li>087</li>
+                    <li>088</li>
+                    <li>089</li>
+                    <li>090</li>
+                    <li>091</li>
+                    <li>092</li>
+                    <li>093</li>
+                    <li>094</li>
+                    <li>095</li>
+                    <li>096</li>
+                    <li>097</li>
+                    <li>098</li>
+                    <li>099</li>
+                    <li>100</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <th>Step 1.</th>
+            <th>Step 2.</th>
+            <th>Step 3.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <td>
+<pre><code class="javascript">
+(function(){
+    for( let i=0; i&lt;document.querySelectorAll("#domList>li").length; i++ ){
+        document.querySelectorAll("#domList>li")[i].innerText = "변경";
+    }
+})();
+</code></pre>
+                <button class="u-full-width" name="check_dom1">실행</button>
+            </td>
+            <td>
+<pre><code class="javascript">
+(function(){
+    let li = document.querySelectorAll("#domList>li");
+    for( let i=0; i&lt;document.querySelectorAll("#domList>li").length; i++ ){
+        li[i].innerText = "변경";
+    }
+})();
+</code></pre>
+                <button class="u-full-width" name="check_dom2">실행</button>
+            </td>
+            <td>
+<pre><code class="javascript">
+(function(){
+    let li = document.querySelectorAll("#domList>li");
+    let cnt = li.length;
+    for( let i=0; i&lt;cnt; i++ ){
+        li[i].innerText = "변경";
+    }
+})();
+</code></pre>
+                <button class="u-full-width" name="check_dom3">실행</button>
+            </td>
+        </tr>
+      </tbody>
+  </table>
+</body>
+</html>
